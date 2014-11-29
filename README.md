@@ -34,14 +34,15 @@ Giải thích 1 chút về hình trên:
 
 # Quy ước
 
-* Việc merge các branch với nhau sẽ được làm trên github thông qua các pull requests. Không merge trên local. 
+* Việc merge các branch với nhau sẽ được làm trên github thông qua các pull requests. Không merge trên local.
 
-* merge vào master sẽ chỉ do leader tiến hành. Không merge trên local rồi tự ý push vào master. merge các branch khác thì không cần leader. 
+* Việc merge vào master sẽ chỉ do leader tiến hành. TUYỆT ĐỐI không merge trên local rồi tự ý push vào master. merge các branch khác (như `feature/B` và `feature/B-1` như trên) thì không cần leader.
 
-* Sau khi hoàn thành xong các branch (review, fix, ...) sẽ rebase lại các commit rồi push chèn lên remote. 
+* Sau khi hoàn thành xong các branch (review, fix, ...) sẽ rebase lại các commit rồi push chèn lên remote.
 
 # Thao tác thực tế
 
+## Thao tác cơ bản
 Tạo branch
 
 ```console
@@ -80,6 +81,40 @@ Người được assignee có trách nhiệm merge nên phải review code mớ
 
 ![スクリーンショット 2014-06-13 18.38.15.png](https://qiita-image-store.s3.amazonaws.com/0/14914/73bae4d0-5514-ab9a-dcf1-22aafc85bcb4.png "スクリーンショット 2014-06-13 18.38.15.png")
 
-Nếu có comment và phải sửa code thì người đảm nhiệm branch ấy sẽ sửa lại và push lại. Việc này sẽ tiến hành đến khi nào người được assignee chấp nhận thì thôi. 
+Nếu có comment và phải sửa code thì người đảm nhiệm branch ấy sẽ sửa lại và push lại. Việc này sẽ tiến hành đến khi nào người được assignee chấp nhận thì thôi.
 
-Đến khi không có vấn đề gì nữa, người được assignee sẽ merge và delete branch ấy đi. 
+Đến khi không có vấn đề gì nữa, người được assignee sẽ merge và delete branch ấy đi.
+
+## Thao tác khi phải rebase
+Khi master thay đổi (đã merge với 1 feature khác, ...) và feature hiện tại không thể merge được, github sẽ thông báo như sau.
+`We can’t automatically merge this pull request`
+Có 2 cách xử lý, cách thứ nhất là merge bằng tay trên local rồi push lên master, nhưng cách này vi phạm quy ước ở trên nên sẽ không dùng. Cách 2 là rebase lại master.
+**Lưu ý** phân biệt rõ ràng sự khác và giống nhau giữa merge và rebase.
+
+Dưới đây là thao tác khi rebase:
+```console
+# quay về master
+git checkout master
+
+# cập nhật master
+git pull origin master
+
+# quay về branch đang làm việc
+git checkout branch_name
+
+# rebase lại với master
+git rebase master
+
+# Nếu có conflict thì sửa lại
+
+# thêm những đoạn code đã sửa lại vào feature
+# đến đây thì KHÔNG ĐƯỢC commit
+git add .
+
+# tiếp tục rebase
+git rebase --continue
+
+# push lại lên remote
+# ở đây có thêm tham số -f để ghi đè lên remote
+git push -f origin branch_name
+```
